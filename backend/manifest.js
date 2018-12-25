@@ -1,6 +1,12 @@
 const plugins = [
     {
-        plugin: 'inert',
+        plugin: require('inert'),
+    },
+    {
+        plugin: require('./api/alba/routes'),
+        routes: {
+            prefix: '/api/v1/alba',
+        },
     },
 ];
 
