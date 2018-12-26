@@ -7,3 +7,8 @@ Territory Nexus
 * **Territory Helper** is the tool used by many English language congregations.  
 * **Foreign Sources** are files, exports, or other data sets that originate from a "foreign" source such as Alba or Territory Helper.
 * **Nexus Sources** are files, exports or other data sets that originate from Vendex. These are typially generated based on data from one or more foreign sources.
+
+# Requirements
+* Docker
+* Node LTS 10+
+* npm 6.x

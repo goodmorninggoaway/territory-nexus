@@ -1,4 +1,6 @@
 const Joi = require('joi');
+const HttpStatusCodes = require('http-status-codes');
+const addForeignLocationExport = require('../../domain/alba').addForeignLocationExport;
 
 exports.plugin = {
     version: require('../../package.json').version,
@@ -9,8 +11,13 @@ exports.plugin = {
             method: 'POST',
             path: '/foreign/location-import/csv',
             async handler(req, h) {
-                const { payload } = req.payload;
-                return true;
+                try {
+                    const { payload } = req.payload;
+                    const id = await addForeignLocationExport({ payload, congregationId: 1 });
+                    return h.response({ id }).code(HttpStatusCodes.CREATED);
+                } catch (e) {
+                    return h.response(e).code(500);
+                }
             },
         });
     },
