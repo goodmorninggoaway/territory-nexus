@@ -2,10 +2,7 @@ const Boom = require('boom');
 
 const plugins = [
     {
-        plugin: require('inert'),
-    },
-    {
-        plugin: require('bell'),
+        plugin: require('./api/server-extensions'),
     },
     {
         plugin: require('./api/authn/plugin'),
@@ -26,7 +23,7 @@ const plugins = [
         },
     },
 ];
- 
+
 if (process.env.NODE_ENV === 'development') {
     plugins.push({
         plugin: 'good',
