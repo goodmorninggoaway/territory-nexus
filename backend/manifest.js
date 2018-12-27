@@ -5,7 +5,7 @@ const plugins = [
         plugin: require('./api/server-extensions'),
     },
     {
-        plugin: require('./api/authn/plugin'),
+        plugin: require('./api/auth/plugin'),
         routes: {
             prefix: '/api/v1/auth',
         },

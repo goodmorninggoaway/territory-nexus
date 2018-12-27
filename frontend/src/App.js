@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Grommet, Box, Button, Grid, Text } from 'grommet';
+import { Grommet, Box, Button, Grid, Text, RoutedButton } from 'grommet';
 import { grommet } from 'grommet/themes';
 import { Route } from 'react-router';
 import CongregationContainer from './congregation/CongregationContainer';
+import AdminCongregationsContainer from './admin/AdminCongregationsContainer';
+import { Group, Sync } from 'grommet-icons';
 
 class App extends Component {
     constructor(props) {
@@ -12,8 +14,9 @@ class App extends Component {
 
     getNav() {
         return [
-            { name: 'My Congregation', url: '/my-congregation', component: CongregationContainer },
-            { name: 'Synchronize', url: '/sync', component: Box },
+            { name: 'My Congregation', icon: <Group />, url: '/my-congregation', component: CongregationContainer },
+            { name: 'Synchronize', icon: <Sync />, url: '/sync', component: Box },
+            { name: 'Congregations', icon: <Group />, url: '/admin/congregations', component: AdminCongregationsContainer },
         ];
     }
 
@@ -55,14 +58,14 @@ class App extends Component {
                         ]}
                     >
                         {this.getNav().map(({ name, url }) => (
-                            <Button key={name} href={url} hoverIndicator>
-                                <Box pad={{ horizontal: 'medium', vertical: 'small' }}>
+                            <RoutedButton key={name} path={url} hoverIndicator>
+                                <Box pad={{ horizontal: 'medium', vertical: 'small' }} direction="row">
                                     <Text>{name}</Text>
                                 </Box>
-                            </Button>
+                            </RoutedButton>
                         ))}
                     </Box>
-                    <Box gridArea="main" background="light-4" >
+                    <Box gridArea="main" background="light-4">
                         {this.getNav().map(({ name, url, component }) => (
                             <Route path={url} component={component} />
                         ))}
