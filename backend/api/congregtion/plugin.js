@@ -3,8 +3,8 @@ const HttpStatusCodes = require('http-status-codes');
 const addCongregation = require('../../domain/congregation').addCongregation;
 
 exports.plugin = {
-    version: require('../../package.json').version,
-    name: 'congregation-router',
+    version: '1',
+    name: 'tnx-congregation-router',
     dependencies: {},
     async register(server, options) {
         server.route({

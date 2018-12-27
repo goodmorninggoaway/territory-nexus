@@ -3,8 +3,8 @@ const HttpStatusCodes = require('http-status-codes');
 const addForeignLocationExport = require('../../domain/alba').addForeignLocationExport;
 
 exports.plugin = {
-    version: require('../../package.json').version,
-    name: 'alba-router',
+    version: '1',
+    name: 'tnx-alba-router',
     dependencies: {},
     async register(server, options) {
         server.route({

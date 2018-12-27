@@ -5,13 +5,22 @@ const plugins = [
         plugin: require('inert'),
     },
     {
-        plugin: require('./api/alba/routes'),
+        plugin: require('bell'),
+    },
+    {
+        plugin: require('./api/authn/plugin'),
+        routes: {
+            prefix: '/api/v1/auth',
+        },
+    },
+    {
+        plugin: require('./api/alba/plugin'),
         routes: {
             prefix: '/api/v1/alba',
         },
     },
     {
-        plugin: require('./api/congregtion/routes'),
+        plugin: require('./api/congregtion/plugin'),
         routes: {
             prefix: '/api/v1/congregation',
         },
