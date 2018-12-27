@@ -1,3 +1,5 @@
+const Boom = require('boom');
+
 const plugins = [
     {
         plugin: require('inert'),
@@ -8,8 +10,14 @@ const plugins = [
             prefix: '/api/v1/alba',
         },
     },
+    {
+        plugin: require('./api/congregtion/routes'),
+        routes: {
+            prefix: '/api/v1/congregation',
+        },
+    },
 ];
-
+ 
 if (process.env.NODE_ENV === 'development') {
     plugins.push({
         plugin: 'good',
@@ -36,21 +44,25 @@ exports.manifest = {
     server: {
         router: {
             stripTrailingSlash: true,
-            isCaseSensitive: false,
         },
         routes: {
-            security: {
-                hsts: false,
-                xss: true,
-                noOpen: true,
-                noSniff: true,
-                xframe: false,
-            },
             cors: true,
-            jsonp: 'callback',
+            validate: {
+                failAction: async (request, h, err) => {
+                    if (process.env.NODE_ENV === 'production') {
+                        // In prod, log a limited error message and throw the default Bad Request error.
+                        console.error('ValidationError:', err.message);
+                        throw Boom.badRequest(`Invalid request payload input`);
+                    } else {
+                        // During development, log and respond with the full error.
+                        console.error(err);
+                        throw err;
+                    }
+                },
+            },
         },
         debug: !!process.env.DEBUG || false,
-        port: +process.env.PORT || 1338,
+        port: +process.env.PORT || 8080,
     },
     register: {
         plugins,

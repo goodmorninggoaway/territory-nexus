@@ -3,7 +3,7 @@ const { mongoDbUrl } = require('./config');
 
 let db;
 const init = async () => {
-    const client = new MongoClient(mongoDbUrl);
+    const client = new MongoClient(mongoDbUrl, { useNewUrlParser: true });
     await client.connect();
     db = client.db('vendex-nexus');
 

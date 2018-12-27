@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "test": "mocha"
+    "test": "NODE_ENV=test mocha"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "boom": "^7.3.0",
+    "bounce": "^1.2.3",
     "dotenv": "^6.2.0",
     "glue": "^5.0.0",
     "good": "^8.1.1",

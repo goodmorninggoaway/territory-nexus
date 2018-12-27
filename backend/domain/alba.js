@@ -10,6 +10,6 @@ exports.addForeignLocationExport = async function addForeignLocationExport({ con
     }, {
         w: 'majority',
     });
-    
+
     return result.insertedId;
 };

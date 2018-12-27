@@ -16,17 +16,16 @@ exports.plugin = {
                     const id = await addForeignLocationExport({ payload, congregationId: 1 });
                     return h.response({ id }).code(HttpStatusCodes.CREATED);
                 } catch (e) {
-                    return h.response(e).code(500);
+                    return h.response(e).code(HttpStatusCodes.INTERNAL_SERVER_ERROR);
                 }
+            },
+            options: {
+                validate: {
+                    payload: Joi.object({
+                        payload: Joi.string().required().description('CSV or TSV Alba export'),
+                    }),
+                },
             },
         });
     },
-    options: {
-        validate: {
-            params: {
-                payload: Joi.string().required().describe('CSV or TSV Alba export'),
-            },
-        },
-    },
-
 };
