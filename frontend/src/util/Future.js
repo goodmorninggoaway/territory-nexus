@@ -29,6 +29,19 @@ export default class Future {
         };
     }
 
+    get loaded() {
+        return this.__internals.loaded;
+    }
+
+    set loaded(loaded) {
+        this.__internals = {
+            value: undefined,
+            loaded: loaded,
+            loading: false,
+            error: false,
+        };
+    }
+
     get error() {
         return this.__internals.error;
     }
@@ -47,5 +60,9 @@ export default class Future {
         const instance = new Future();
         instance.__internals = { ...this.__internals };
         return instance;
+    }
+
+    valueOf() {
+        return { ...this.__internals };
     }
 }

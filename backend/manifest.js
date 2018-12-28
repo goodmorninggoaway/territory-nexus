@@ -17,9 +17,9 @@ const plugins = [
         },
     },
     {
-        plugin: require('./api/congregtion/plugin'),
+        plugin: require('./api/congregation/plugin'),
         routes: {
-            prefix: '/api/v1/congregation',
+            prefix: '/api/v1/congregations',
         },
     },
     { plugin: require('inert') },
@@ -37,27 +37,7 @@ const plugins = [
             },
         },
     },
-    //{
-    //    plugin: require('hapi-swaggered-ui'),
-    //    options: {
-    //        title: 'Territory Nexus API',
-    //        path: '/docs',
-    //        //authorization: {
-    //        //    field: 'apiKey',
-    //        //    scope: 'query', // header works as well
-    //        //    // valuePrefix: 'bearer '// prefix incase
-    //        //    defaultValue: 'demoKey',
-    //        //    placeholder: 'Enter your apiKey here',
-    //        //},
-    //        swaggerOptions: {
-    //            validatorUrl: null,
-    //        },
-    //    },
-    //},
-];
-
-if (process.env.NODE_ENV === 'development') {
-    plugins.push({
+    {
         plugin: 'good',
         options: {
             ops: {
@@ -75,8 +55,8 @@ if (process.env.NODE_ENV === 'development') {
                 ],
             },
         },
-    });
-}
+    }
+];
 
 exports.manifest = {
     server: {

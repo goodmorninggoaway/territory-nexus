@@ -79,7 +79,7 @@ class App extends Component {
                     ]}
                 >
                     {this.getNav().map(({ name, url, children }) => (
-                        <>
+                        <React.Fragment key={url}>
                             <RoutedButton key={name} path={url} hoverIndicator>
                                 <Box pad={{ horizontal: 'medium', vertical: 'small' }} direction="row">
                                     <Text>{name}</Text>
@@ -92,15 +92,15 @@ class App extends Component {
                                     </Box>
                                 </RoutedButton>
                             ))}
-                        </>),
+                        </React.Fragment>),
                     )}
                 </Box>
                 <Box gridArea="main" background="light-4" fill>
                     {this.getNav().map(({ name, url, component, exact, children }) => (
-                        <>
+                        <React.Fragment key={url}>
                             <Route path={url} component={component} exact />
-                            {children && children.map(({ url, component, exact }) => <Route path={url} component={component} exact />)}
-                        </>
+                            {children && children.map(({ url, component, exact }) => <Route key={url} path={url} component={component} exact={exact} />)}
+                        </React.Fragment>
                     ))}
                 </Box>
             </Grid>

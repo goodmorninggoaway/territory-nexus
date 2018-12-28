@@ -1,4 +1,6 @@
 const HttpStatusCodes = require('http-status-codes');
+const Joi = require('joi');
+const getCongregations = require('../../domain/congregation').getCongregations;
 const deleteCongregation = require('../../domain/congregation').deleteCongregation;
 const UpdateCongregationRequestValidator = require('./schemas').UpdateCongregationRequestValidator;
 const updateCongregation = require('../../domain/congregation').updateCongregation;
@@ -11,6 +13,24 @@ exports.plugin = {
     name: 'tnx-congregation-router',
     dependencies: {},
     async register(server, options) {
+        server.route({
+            method: 'GET',
+            path: '/',
+            async handler(req, h) {
+                const congregations = await getCongregations();
+
+                return h.response(congregations);
+            },
+            options: {
+                tags: ['api'],
+                response: {
+                    status: {
+                        [HttpStatusCodes.OK]: Joi.array().items(Congregation),
+                    },
+                },
+            },
+        });
+
         server.route({
             method: 'POST',
             path: '/',

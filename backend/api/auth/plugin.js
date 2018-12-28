@@ -1,7 +1,7 @@
 const { signToken } = require('./jwt');
 
-const generateCookie = (req, h, { name, email }) => {
-    const token = signToken({ id: email, email, name });
+const generateCookie = async (req, h, { name, email }) => {
+    const token = await signToken({ id: email, email, name });
 
     console.debug('Login success', req.auth.credentials.profile);
 
@@ -12,7 +12,7 @@ const generateCookie = (req, h, { name, email }) => {
             path: '/',
             isSecure: process.env.USE_SSL !== 'false',
         })
-        .redirect('/');
+        .redirect(process.env.UI_URL);
 };
 
 const enableGoogle = (server) => {
@@ -33,13 +33,13 @@ const enableGoogle = (server) => {
                 strategy: 'google',
                 mode: 'try',
             },
-            handler: function (request, h) {
+            handler: async function (request, h) {
 
                 if (!request.auth.isAuthenticated) {
                     return 'Authentication failed due to: ' + request.auth.error.message;
                 }
 
-                return generateCookie(request, h, {
+                return await generateCookie(request, h, {
                     name: request.auth.credentials.profile.displayName,
                     email: request.auth.credentials.profile.email,
                 });

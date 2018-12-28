@@ -21,12 +21,12 @@ describe('Congregation APIs', () => {
         await reset();
     });
 
-    describe('POST /congregation', () => {
+    describe('POST /congregations', () => {
         it('should create a congregation', async () => {
             const input = require('./__fixtures/create-congregation');
             const response = await server.inject({
                 method: 'POST',
-                url: '/api/v1/congregation',
+                url: '/api/v1/congregations',
                 payload: input,
             });
 
@@ -47,7 +47,7 @@ describe('Congregation APIs', () => {
         });
     });
 
-    describe('PUT /congregation/{congregationId}', () => {
+    describe('PUT /congregations/{congregationId}', () => {
         it('should edit a congregation', async () => {
             const createdCongregation = await addCongregation({
                 congregation: pick(require('./__fixtures/create-congregation'), 'name', 'language', 'alternateLanguages'),
@@ -56,7 +56,7 @@ describe('Congregation APIs', () => {
             const input = require('./__fixtures/edit-congregation');
             const response = await server.inject({
                 method: 'PUT',
-                url: `/api/v1/congregation/${createdCongregation._id}`,
+                url: `/api/v1/congregations/${createdCongregation._id}`,
                 payload: input,
             });
 
@@ -72,7 +72,7 @@ describe('Congregation APIs', () => {
         });
     });
 
-    describe('DELETE /congregation/{congregationId}', () => {
+    describe('DELETE /congregations/{congregationId}', () => {
         it('should delete a congregation', async () => {
             const createdCongregation = await addCongregation({
                 congregation: pick(require('./__fixtures/create-congregation'), 'name', 'language', 'alternateLanguages'),
@@ -80,10 +80,28 @@ describe('Congregation APIs', () => {
 
             const response = await server.inject({
                 method: 'DELETE',
-                url: `/api/v1/congregation/${createdCongregation._id}`,
+                url: `/api/v1/congregations/${createdCongregation._id}`,
             });
 
             expect(response.statusCode).to.equal(HttpStatusCodes.OK);
+        });
+    });
+
+    describe('GET /congregations', () => {
+        it('should delete a congregation', async () => {
+            const createdCongregation = await addCongregation({
+                congregation: pick(require('./__fixtures/create-congregation'), 'name', 'language', 'alternateLanguages'),
+            });
+
+            const response = await server.inject({
+                method: 'GET',
+                url: `/api/v1/congregations`,
+            });
+
+            expect(response.statusCode).to.equal(HttpStatusCodes.OK);
+            const actual = JSON.parse(response.payload);
+
+            expect(actual).to.have.length(1);
         });
     });
 });

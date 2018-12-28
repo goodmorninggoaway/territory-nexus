@@ -64,9 +64,11 @@ class Notification {
             options.bcc = NOTIFICATION_BCC;
         }
 
-        const disable = process.env.NODE_ENV === 'test' || process.env.DISABLE_NOTIFICATIONS;
+        const disable = process.env.NODE_ENV === 'test' || (process.env.DISABLE_NOTIFICATIONS && process.env.DISABLE_NOTIFICATIONS !== 'false' && process.env.DISABLE_NOTIFICATIONS !== '0');
         if (!disable) {
             return await mailgun.messages().send(options);
+        } else {
+            console.debug('Notifications are disabled. Not sending', options);
         }
     }
 }

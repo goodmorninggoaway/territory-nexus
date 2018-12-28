@@ -3,7 +3,7 @@ import Future from './Future';
 export default class FetchableFuture {
     static bind(reactComponentInstance, members) {
         reactComponentInstance.state = Object.entries(members).reduce((memo, [member, initialValue]) => {
-            memo[member] = new FetchableFuture(reactComponentInstance, initialValue);
+            memo[member] = new FetchableFuture(reactComponentInstance, initialValue, member);
             return memo;
         }, reactComponentInstance.state || {});
     }
@@ -20,16 +20,17 @@ export default class FetchableFuture {
     }
 
     async _setState(mutator) {
+        const { member } = this.__internals;
         return new Promise(resolve => {
             this.__internals.reactComponentInstance.setState((state) => {
-                const future = state[this.__internals.member];
+                const future = state[member];
                 if (!future || !future instanceof FetchableFuture) {
                     return undefined;
                 }
 
                 mutator(future);
 
-                return { [this.__internals.member]: future.clone() };
+                return { [member]: future.clone() };
             }, resolve);
         });
     }
@@ -59,6 +60,14 @@ export default class FetchableFuture {
         this._future.loading = loading;
     }
 
+    get loaded() {
+        return this._future.loaded;
+    }
+
+    set loaded(loaded) {
+        return this._future.loaded = loaded;
+    }
+
     get error() {
         return this._future.error;
     }
@@ -70,6 +79,7 @@ export default class FetchableFuture {
     clone() {
         const instance = new FetchableFuture();
         instance.__internals = { ...this.__internals, future: this.__internals.future.clone() };
+        return instance;
     }
 
     async fetch(fetcher) {
@@ -90,4 +100,7 @@ export default class FetchableFuture {
         }
     }
 
+    valueOf() {
+        return this._future.valueOf();
+    }
 }

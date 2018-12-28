@@ -2,6 +2,15 @@ const getDatabase = require('./mongo');
 const { ObjectId } = require('mongodb');
 const Notification = require('./notifications');
 
+exports.getCongregations = async () => {
+    const db = await getDatabase();
+
+    const congregations = await db.collection('congregation').find({})
+        .sort({ name: 1 })
+        .toArray();
+    return congregations;
+};
+
 exports.addCongregation = async ({ congregation: dto, sendNotification = false }) => {
     const db = await getDatabase();
 

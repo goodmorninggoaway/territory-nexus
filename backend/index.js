@@ -1,4 +1,8 @@
 require('dotenv').config();
+require('@babel/register')({
+    extensions: '.jsx',
+});
+
 const Glue = require('glue');
 const manifest = require('./manifest');
 

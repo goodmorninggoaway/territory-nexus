@@ -4,27 +4,39 @@ import { Box, Heading, Button, DataTable, Text } from 'grommet';
 import { ChapterAdd, Edit, Trash } from 'grommet-icons';
 import FetchableFuture from '../util/FetchableFuture';
 import axios from '../util/axios';
+import CongregationFormModal from './CongregationFormModal';
+import CongregationDeleteDialog from './CongregationDeleteDialog';
 
 class AdminCongregationsContainer extends Component {
     constructor(props) {
         super(props);
         autobind(this);
 
+        this.state = {
+            showAddCongregationModal: false,
+            showEditCongregationModal: false,
+            showDeleteCongregationConfirmation: false,
+        };
+
         FetchableFuture.bind(this, { congregations: [] });
     }
 
     componentDidMount() {
+        this.fetchCongregations();
+    }
+
+    fetchCongregations() {
         this.state.congregations.fetch(axios.get('/congregations'));
     }
 
     render() {
-        const { congregations } = this.state;
+        const { congregations, showAddCongregationModal, showEditCongregationModal, showDeleteCongregationConfirmation } = this.state;
         return (
             <Box pad="small" background="white" round="xsmall" margin="small">
                 <Box direction="row" justify="between">
                     <Heading level={3} margin="xsmall">Congregations</Heading>
                     <Box>
-                        <Button label="New Congregation" icon={<ChapterAdd />} primary />
+                        <Button label="New Congregation" icon={<ChapterAdd />} primary onClick={() => this.setState({ showAddCongregationModal: true })} />
                     </Box>
                 </Box>
                 <Box>
@@ -34,11 +46,11 @@ class AdminCongregationsContainer extends Component {
                             columns={[
                                 {
                                     header: '',
-                                    property: 'id',
-                                    render: () => (
+                                    property: '_id',
+                                    render: (datum) => (
                                         <Box direction="row">
-                                            <Button icon={<Edit />} />
-                                            <Button icon={<Trash />} />
+                                            <Button icon={<Edit />} onClick={() => this.setState({ showEditCongregationModal: datum })} />
+                                            <Button icon={<Trash />} onClick={() => this.setState({ showDeleteCongregationConfirmation: datum })} />
                                         </Box>
                                     ),
                                 },
@@ -55,7 +67,7 @@ class AdminCongregationsContainer extends Component {
                                     property: 'users',
                                     render: ({ users }) => (
                                         <>
-                                            {users && users.map(({ id, name, email }) => <Text>{name} ({email}), </Text>)}
+                                            {users && users.map(({ name, email }) => <Text key={email}>{name} ({email}), </Text>)}
                                         </>
                                     ),
                                 },
@@ -64,6 +76,26 @@ class AdminCongregationsContainer extends Component {
                     )}
                     {(congregations.loading || !congregations.loaded) && <div>Loading</div>}
                 </Box>
+
+                {showAddCongregationModal && (
+                    <CongregationFormModal
+                        create
+                        close={() => this.setState({ showAddCongregationModal: false }, this.fetchCongregations)}
+                    />
+                )}
+                {showEditCongregationModal && (
+                    <CongregationFormModal
+                        edit
+                        value={showEditCongregationModal}
+                        close={() => this.setState({ showEditCongregationModal: false }, this.fetchCongregations)}
+                    />
+                )}
+                {showDeleteCongregationConfirmation && (
+                    <CongregationDeleteDialog
+                        value={showDeleteCongregationConfirmation}
+                        close={() => this.setState({ showDeleteCongregationConfirmation: false }, this.fetchCongregations)}
+                    />
+                )}
             </Box>
         );
     }
