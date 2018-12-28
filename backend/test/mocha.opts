@@ -1,2 +1,4 @@
 --recursive
 --exit
+--require @babel/register
+--require ./test/mocha-setup.js

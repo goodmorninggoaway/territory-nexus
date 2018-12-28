@@ -63,7 +63,9 @@ const configureJwtSession = (server) => {
         verifyOptions: { algorithms: ['HS256'] },
     });
 
-    server.auth.default('jwt');
+    if (process.env.NODE_ENV !== 'test') {
+        server.auth.default('jwt');
+    }
 };
 
 exports.plugin = {

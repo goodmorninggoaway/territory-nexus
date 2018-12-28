@@ -1,13 +1,16 @@
 const Glue = require('glue');
 const chai = require('chai');
-const dirtyChai = require('dirty-chai');
 const HttpStatusCodes = require('http-status-codes');
 const manifest = require('../manifest');
+const pick = require('lodash').pick;
+const addCongregation = require('../domain/congregation').addCongregation;
 const reset = require('../../backend/domain/mongo').reset;
-const { expect } = chai;
-chai.use(dirtyChai);
 
-describe('Congregation Routes', () => {
+const { expect } = chai;
+chai.use(require('dirty-chai'));
+chai.use(require('sinon-chai'));
+
+describe('Congregation APIs', () => {
     let server;
 
     beforeEach(async () => {
@@ -19,8 +22,8 @@ describe('Congregation Routes', () => {
     });
 
     describe('POST /congregation', () => {
-        it('should return create a record', async () => {
-            const input = require('./__fixtures/congregation');
+        it('should create a congregation', async () => {
+            const input = require('./__fixtures/create-congregation');
             const response = await server.inject({
                 method: 'POST',
                 url: '/api/v1/congregation',
@@ -28,8 +31,59 @@ describe('Congregation Routes', () => {
             });
 
             expect(response.statusCode).to.equal(HttpStatusCodes.CREATED);
-            expect(JSON.parse(response.payload)).to.deep.include(input);
-            expect(JSON.parse(response.payload)).to.have.property('_id');
+
+            const actual = JSON.parse(response.payload);
+            expect(actual).to.have.property('_id');
+            expect(actual).to.deep.include({
+                name: input.name,
+                language: input.language,
+                users: [
+                    {
+                        name: input.admin.name,
+                        email: input.admin.email,
+                    },
+                ],
+            });
+        });
+    });
+
+    describe('PUT /congregation/{congregationId}', () => {
+        it('should edit a congregation', async () => {
+            const createdCongregation = await addCongregation({
+                congregation: pick(require('./__fixtures/create-congregation'), 'name', 'language', 'alternateLanguages'),
+            });
+
+            const input = require('./__fixtures/edit-congregation');
+            const response = await server.inject({
+                method: 'PUT',
+                url: `/api/v1/congregation/${createdCongregation._id}`,
+                payload: input,
+            });
+
+            expect(response.statusCode).to.equal(HttpStatusCodes.OK);
+
+            const actual = JSON.parse(response.payload);
+            expect(actual).to.deep.include({
+                _id: createdCongregation._id,
+                name: input.name,
+                language: input.language,
+                alternateLanguages: input.alternateLanguages,
+            });
+        });
+    });
+
+    describe('DELETE /congregation/{congregationId}', () => {
+        it('should delete a congregation', async () => {
+            const createdCongregation = await addCongregation({
+                congregation: pick(require('./__fixtures/create-congregation'), 'name', 'language', 'alternateLanguages'),
+            });
+
+            const response = await server.inject({
+                method: 'DELETE',
+                url: `/api/v1/congregation/${createdCongregation._id}`,
+            });
+
+            expect(response.statusCode).to.equal(HttpStatusCodes.OK);
         });
     });
 });
