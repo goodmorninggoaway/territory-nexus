@@ -12,8 +12,6 @@ class AlbaToTerritoryHelperApiSyncContainer extends Component {
     }
 
     render() {
-        const {} = this.props;
-        const {} = this.state;
         return (
             <Box gap="small" pad="small" direction="row" fill>
                 <Box pad="small" gap="small" overflow="auto" background="white" round="xsmall" basis="3/4">
