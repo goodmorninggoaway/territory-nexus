@@ -1,13 +1,16 @@
 const JWT = require('jsonwebtoken');
 const Moment = require('moment');
-const TTL = process.env.TOKEN_TTL_SECONDS || 3600;
 
-exports.signToken = async ({ id, ...claims }) => {
-    return await JWT.sign({
-        ...claims,
+exports.signToken = async ({ id, ...requestedClaims }) => {
+    const claims = {
+        aud: null,
+        ...requestedClaims,
         iss: 'Territory Nexus',
         iat: new Moment().unix(),
-        exp: new Moment().add(TTL, 'seconds').unix(),
-        sub: claims.id,
-    }, process.env.TOKEN_SECRET);
+        exp: new Moment().add(process.env.TOKEN_TTL_SECONDS || 3600, 'seconds').unix(),
+        sub: requestedClaims.id,
+    };
+    const token = await JWT.sign(claims, process.env.TOKEN_SECRET);
+
+    return { claims, token };
 };

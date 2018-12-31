@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import autobind from 'react-autobind';
 import { Box, Heading, Button, DataTable, Text } from 'grommet';
-import { ChapterAdd, Edit, Trash } from 'grommet-icons';
+import { ChapterAdd, Edit, Trash, Login } from 'grommet-icons';
 import FetchableFuture from '../util/FetchableFuture';
 import axios from '../util/axios';
 import CongregationFormModal from './CongregationFormModal';
 import CongregationDeleteDialog from './CongregationDeleteDialog';
+import CongregationSwitchDialog from './CongregationSwitchDialog';
 
 class AdminCongregationsContainer extends Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class AdminCongregationsContainer extends Component {
             showAddCongregationModal: false,
             showEditCongregationModal: false,
             showDeleteCongregationConfirmation: false,
+            showSwitchCongregationConfirmation: false,
         };
 
         FetchableFuture.bind(this, { congregations: [] });
@@ -30,7 +32,7 @@ class AdminCongregationsContainer extends Component {
     }
 
     render() {
-        const { congregations, showAddCongregationModal, showEditCongregationModal, showDeleteCongregationConfirmation } = this.state;
+        const { congregations, showAddCongregationModal, showEditCongregationModal, showDeleteCongregationConfirmation, showSwitchCongregationConfirmation } = this.state;
         return (
             <Box pad="small" background="white" round="xsmall" margin="small">
                 <Box direction="row" justify="between">
@@ -51,6 +53,7 @@ class AdminCongregationsContainer extends Component {
                                         <Box direction="row">
                                             <Button icon={<Edit />} onClick={() => this.setState({ showEditCongregationModal: datum })} />
                                             <Button icon={<Trash />} onClick={() => this.setState({ showDeleteCongregationConfirmation: datum })} />
+                                            <Button icon={<Login />} onClick={() => this.setState({ showSwitchCongregationConfirmation: datum })} />
                                         </Box>
                                     ),
                                 },
@@ -94,6 +97,13 @@ class AdminCongregationsContainer extends Component {
                     <CongregationDeleteDialog
                         value={showDeleteCongregationConfirmation}
                         close={() => this.setState({ showDeleteCongregationConfirmation: false }, this.fetchCongregations)}
+                    />
+                )}
+                {showSwitchCongregationConfirmation && (
+                    <CongregationSwitchDialog
+                        value={showSwitchCongregationConfirmation}
+                        close={() => this.setState({ showSwitchCongregationConfirmation: false })}
+                        history={this.props.history}
                     />
                 )}
             </Box>

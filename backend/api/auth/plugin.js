@@ -1,18 +1,37 @@
+const Joi = require('joi');
+const HttpStatusCodes = require('http-status-codes');
 const { signToken } = require('./jwt');
 
-const generateCookie = async (req, h, { name, email }) => {
+const generateCookieAndRedirect = async (req, h, { name, email }) => {
     const token = await signToken({ id: email, email, name });
 
-    console.debug('Login success', req.auth.credentials.profile);
+    console.debug('Login success with profile', req.auth.credentials.profile);
 
     return h
-        .response()
-        .header('authorization', token)
-        .state('token', token, {
+        .response(token)
+        .state('token', token.token, {
             path: '/',
             isSecure: process.env.USE_SSL !== 'false',
         })
         .redirect(process.env.UI_URL);
+};
+
+const upgradeAuthToken = async (req, h, { claims, congregation }) => {
+    const newClaims = { ...req.auth.credentials };
+    if (congregation !== undefined) {
+        newClaims.aud = `urn:congregation:${congregation}`;
+    }
+
+    const token = await signToken(newClaims);
+
+    console.debug('Token upgrade success', token);
+
+    return h
+        .response(token)
+        .state('token', token.token, {
+            path: '/',
+            isSecure: process.env.USE_SSL !== 'false',
+        });
 };
 
 const enableGoogle = (server) => {
@@ -39,7 +58,7 @@ const enableGoogle = (server) => {
                     return 'Authentication failed due to: ' + request.auth.error.message;
                 }
 
-                return await generateCookie(request, h, {
+                return await generateCookieAndRedirect(request, h, {
                     name: request.auth.credentials.profile.displayName,
                     email: request.auth.credentials.profile.email,
                 });
@@ -77,5 +96,31 @@ exports.plugin = {
 
         server.register(require('bell'));
         enableGoogle(server);
+
+        server.route({
+            method: 'PUT',
+            path: '/',
+            async handler(req, h) {
+                // TODO Add access controls around this API
+                return await upgradeAuthToken(req, h, req.payload);
+            },
+            options: {
+                tags: ['api', 'auth'],
+                validate: {
+                    payload: Joi.object({
+                        congregation: Joi.string().description('Set or change the aud claim to a specific congregation'),
+                    }),
+                    options: {
+                        stripUnknown: true,
+                    },
+                },
+                response: {
+                    status: {
+                        [HttpStatusCodes.OK]: Joi.object(),
+                    },
+                },
+            },
+        });
+
     },
 };
