@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import autobind from 'react-autobind';
 import { Box, Heading, Text, DataTable, Button } from 'grommet';
 import { Trash, Edit, UserAdd, ChapterAdd } from 'grommet-icons';
+import FetchableFuture from '../util/FetchableFuture';
+import Congregation from './Congregation';
 
 class CongregationContainer extends Component {
     constructor(props) {
@@ -23,6 +25,7 @@ class CongregationContainer extends Component {
                 { from: { source: 'alba', type: 'location-export' }, to: { source: 'territory-helper', type: 'location-import' } },
             ],
         };
+
     }
 
     render() {
@@ -30,22 +33,7 @@ class CongregationContainer extends Component {
         return (
             <Box pad="small" gap="small" overflow="auto">
                 <Box pad="small" background="white" round="xsmall">
-                    <Box direction="row" justify="between">
-                        <Heading level={2} margin="xsmall">{congregation.name} <Text size="0.6em" color="dark-4">English</Text></Heading>
-                        <Box>
-                            <Button icon={<Edit />} />
-                        </Box>
-                    </Box>
-                    <Box margin="xsmall">
-                        {Array.isArray(congregation.alternateLanguages) && congregation.alternateLanguages.length && (
-                            <>
-                                <Text>Other Languages:</Text>
-                                <ul>
-                                    {congregation.alternateLanguages.map(language => <li><Text>{language}</Text></li>)}
-                                </ul>
-                            </>
-                        )}
-                    </Box>
+                    <Congregation />
                 </Box>
                 <Box direction="row" gap="small" justify="between">
                     <Box pad="small" background="white" round="xsmall" fill>

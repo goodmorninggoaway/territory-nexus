@@ -5,10 +5,15 @@ const Notification = require('./notifications');
 exports.getCongregations = async () => {
     const db = await getDatabase();
 
-    const congregations = await db.collection('congregation').find({})
+    return await db.collection('congregation').find({})
         .sort({ name: 1 })
         .toArray();
-    return congregations;
+};
+
+exports.getCongregation = async (congregationId) => {
+    const db = await getDatabase();
+
+    return await db.collection('congregation').findOne({ _id: congregationId });
 };
 
 exports.addCongregation = async ({ congregation: dto, sendNotification = false }) => {

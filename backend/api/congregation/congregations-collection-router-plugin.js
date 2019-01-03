@@ -10,7 +10,7 @@ const addCongregation = require('../../domain/congregation').addCongregation;
 
 exports.plugin = {
     version: '1',
-    name: 'tnx-congregation-router',
+    name: 'tnx-congregations-router',
     dependencies: {},
     async register(server, options) {
         server.route({

@@ -84,19 +84,23 @@ export default class FetchableFuture {
 
     async fetch(fetcher) {
         try {
-            this._setState(future => {
+            await this._setState(future => {
                 future.loading = true;
             });
 
             const { data } = await (typeof fetcher === 'function' ? fetcher() : fetcher);
 
-            this._setState(future => {
+            await this._setState(future => {
                 future.value = data;
             });
+            
+            return data;
         } catch (e) {
-            this._setState(future => {
+            await this._setState(future => {
                 future.error = e;
             });
+            
+            throw e;
         }
     }
 

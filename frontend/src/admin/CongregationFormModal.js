@@ -20,12 +20,12 @@ class CongregationFormModal extends Component {
     async onSubmit(values) {
         const { close, create, edit } = this.props;
         if (create) {
-            await this.state.congregation.fetch(axios.post('/congregations', values));
+            const congregation = await this.state.congregation.fetch(axios.post('/congregations', values));
+            close(true, congregation);
         } else if (edit) {
-            await this.state.congregation.fetch(axios.put(`/congregations/${values._id}`, values));
+            const congregation = await this.state.congregation.fetch(axios.put(`/congregations/${values._id}`, values));
+            close(true, congregation);
         }
-
-        close();
     }
 
     schema() {
@@ -59,8 +59,8 @@ class CongregationFormModal extends Component {
             <Layer
                 position="center"
                 modal
-                onClickOutside={close}
-                onEsc={close}
+                onClickOutside={() => close(false)}
+                onEsc={() => close(false)}
             >
                 <Formik
                     initialValues={value}

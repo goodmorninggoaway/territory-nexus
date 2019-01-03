@@ -17,9 +17,15 @@ const plugins = [
         },
     },
     {
-        plugin: require('./api/congregation/plugin'),
+        plugin: require('./api/congregation/congregations-collection-router-plugin'),
         routes: {
             prefix: '/api/v1/congregations',
+        },
+    },
+    {
+        plugin: require('./api/congregation/congregation-router-plugin'),
+        routes: {
+            prefix: '/api/v1/congregation',
         },
     },
     { plugin: require('inert') },
